@@ -26,16 +26,6 @@ Sprint_6/
 ├─ requirements.txt # Зависимости
 └─ README.md        # Документация
 
-
----
-
-## Используемые технологии
-
-- Python 3.x  
-- Selenium WebDriver (Firefox)  
-- pytest  
-- Allure для отчетности  
-
 ---
 
 ## Как запустить тесты
