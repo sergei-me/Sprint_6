@@ -8,8 +8,8 @@ from config import BASE_URL
 @allure.description("Проверка текста отображения ответа на вопрос")
 @pytest.mark.parametrize("index, expected", FAQ_DATA)
 def test_check_faq_questions(driver, index, expected):
-    page = MainPageQuestions(driver, BASE_URL)
-    page.open()
+    page = MainPageQuestions(driver)
+    page.open_url(BASE_URL)
     page.accept_cookies()
     with allure.step(f"Открытие вопроса {index}"):
         page.open_question(index)
