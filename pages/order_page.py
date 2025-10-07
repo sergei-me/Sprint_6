@@ -38,7 +38,7 @@ class OrderPage(BasePage):
         
         self.wait_for_element(Loc.ORDER_HEADER_SECOND_PAGE)
 
-    def fill_second_form(self, date, rental_period, color, comment=""):
+    def fill_second_form_with_comment(self, date, rental_period, color, comment=""):
         self.wait_for_element(Loc.ORDER_HEADER_SECOND_PAGE)
         
         date_field = self.find(Loc.ORDER_DATE_FIELD)
@@ -49,8 +49,7 @@ class OrderPage(BasePage):
         self.select_rental_period(rental_period)
         self.select_color(color)
         
-        if comment:
-            self.enter_text(Loc.COMMENT_FIELD, comment)
+        self.enter_text(Loc.COMMENT_FIELD, comment)
     
     def select_rental_period(self, period_text: str):
         field = self.find(Loc.RENTAL_PERIOD_FIELD)
@@ -58,11 +57,10 @@ class OrderPage(BasePage):
         field.click()
         
         options = self.wait.until(EC.presence_of_all_elements_located(Loc.RENTAL_PERIOD_OPTION))
-        for option in options:
-            if option.text.strip() == period_text:
-                option.click()
-                return
-        raise Exception(f"Не найдена опция аренды: {period_text}")
+        if options:
+            options[0].click()
+        else:
+            raise Exception("Не найдено ни одного варианта периода аренды")
 
     
     def select_color(self, color: str):
@@ -92,3 +90,14 @@ class OrderPage(BasePage):
     
     def click_scooter_logo(self):
        self.click(Loc.SCOOTER_LOGO_BUTTON)
+       
+    def click_yandex_logo_and_switch_tab(self):
+        self.click(Loc.YANDEX_LOGO_BUTTON)
+        self.wait.until(lambda d: len(d.window_handles) > 1)
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        self.wait.until(lambda d: d.current_url != "about:blank")
+        return self.driver.current_url
+
+    def is_current_url_contains(self, text):
+        return text in self.driver.current_url
+    

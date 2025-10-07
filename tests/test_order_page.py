@@ -20,7 +20,7 @@ def test_order_scooter_top_button(driver, first_name, last_name, address, phone,
 
     with allure.step("Заполнение формы"):
         order_page.fill_first_form(first_name, last_name, address, phone)
-        order_page.fill_second_form(date, duration, color, comment)
+        order_page.fill_second_form_with_comment(date, duration, color, comment)
 
     with allure.step("Подтверждение заказа"):
         order_page.confirm_order()
@@ -44,7 +44,7 @@ def test_order_scooter_bottom_button(driver, first_name, last_name, address, pho
 
     with allure.step("Заполнение формы"):
         order_page.fill_first_form(first_name, last_name, address, phone)
-        order_page.fill_second_form(date, duration, color, comment)
+        order_page.fill_second_form_with_comment(date, duration, color, comment)
 
     with allure.step("Подтверждение заказа"):
         order_page.confirm_order()
@@ -59,17 +59,11 @@ def test_click_yandex_logo(driver):
     order_page.open_url()
     order_page.accept_cookies()
 
-    with allure.step("Клик по логотипу Яндекс"):
-        order_page.click_yandex_logo()
-        WebDriverWait(driver, 10).until(lambda d: len(d.window_handles) > 1)
-        driver.switch_to.window(driver.window_handles[-1])
-        WebDriverWait(driver, 10).until(lambda d: d.current_url != "about:blank")
+    with allure.step("Клик по логотипу Яндекс и переключение на новую вкладку"):
+        new_tab_url = order_page.click_yandex_logo_and_switch_tab()
 
-    with allure.step("Проверка retpath на dzen.ru"):
-        parsed = urlparse(driver.current_url)
-        params = parse_qs(parsed.query)
-        retpath = params.get("retpath", [""])[0]
-        assert "dzen.ru" in retpath
+    with allure.step("Проверка перехода на Dzen"):
+        assert "dzen.ru" in new_tab_url, f"Ожидался переход на Dzen, но получен URL: {new_tab_url}"
 
 
 @allure.title("Навигация по логотипу Самокат")
@@ -83,5 +77,5 @@ def test_click_scooter_logo(driver):
         order_page.click_scooter_logo()
 
     with allure.step("Проверка открытия нужной страницы"):
-        assert "qa-scooter.praktikum-services.ru" in urlparse(driver.current_url).netloc
+        assert order_page.is_current_url_contains("qa-scooter.praktikum-services.ru")
 
